@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.soulrebel'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.7.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
+    implementation group: 'io.vavr', name: 'vavr', version: '0.9.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
