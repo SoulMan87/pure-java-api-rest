@@ -1,31 +1,21 @@
-## REST API in pure Java without any frameworks
+## Creating a REST API in Java Without Utilizing Frameworks
 
-This is a demo application developed in Java 11 using
-[`jdk.httpserver`](https://docs.oracle.com/javase/10/docs/api/com/sun/net/httpserver/package-summary.html) module
-and a few additional Java libraries (like [vavr](http://www.vavr.io/), [lombok](https://projectlombok.org/)).
+This is a demonstration application crafted in Java 11, harnessing the power of the
+[`jdk.httpserver`](https://docs.oracle.com/javase/10/docs/api/com/sun/net/httpserver/package-summary.html) module and supplemented with select Java libraries, including [vavr](http://www.vavr.io/), [lombok](https://projectlombok.org/).
 
-## Genesis of this project
-I am a day-to-day Spring developer and I got used to this framework so much that I imagined how it would be to forget about it for a while
-and try to build completely pure Java application from scratch.
+## Origins of this Endeavor
+As a dedicated Spring developer in my day-to-day work, I've become deeply accustomed to the framework. However, I recently found myself contemplating what it would be like to temporarily set Spring aside and embark on the journey of crafting a pure Java application from the ground up.
 
-I thought it could be interesting from learning perspective and a bit refreshing.
+The idea of this endeavor intrigued me, not only from a learning perspective but also as a means of rejuvenation in my development routine. As I delved into this undertaking, I encountered numerous instances where I yearned for the convenient features Spring readily offers.
 
-When I started building this I often came across situations when I missed some features which Spring provides out of the box.
+In such moments, rather than resorting to the familiar Spring toolbox, I challenged myself to reconsider and handcraft those functionalities. It became evident that for real-world business scenarios, I would likely lean towards using Spring to save time and effort rather than reinventing the wheel.
 
-At that times, instead of switching on another Spring capability, I had to rethink it and develop it myself.
+Nonetheless, I found this exercise to be an incredibly enriching experience, one that broadened my understanding of Java development and provided valuable insights into the inner workings of the Spring framework.
 
-It occurred that for real business case I would probably still prefer to use Spring instead of reinventing a wheel.
+## Commencement
+I will guide you through each step of this exercise, although I won't always provide the complete code within the text. However, you can easily access the code for each step by checking out separate branches.
 
-Still, I believe the exercise was pretty interesting experience.
-
-## Beginning.
-I will go through this exercise step by step but not always pasting a complete code in text
-but you can always checkout each step from a separate branch.
-I started from empty `Application` main class. You can get an initial branch like that:
-
-```
-git checkout step-1
-```
+The starting point for this journey is an empty Application main class. You can obtain an initial branch with this setup like so:
 
 ## First endpoint
 
@@ -57,28 +47,22 @@ class Application {
     }
 }
 ```
-When you run main program it will start web server at port `8000` and expose out first endpoint which is just printing `Hello!`, e.g. using curl:
+Upon executing the main program, it will initiate a web server on port `8000`, making our inaugural endpoint accessible. This initial endpoint is quite straightforward; it merely responds with a cheerful "Hello!" message. You can interact with it, for instance, by using the curl command:
 
 ```bash
 curl localhost:8000/api/hello
 ```
 
-Try it out yourself from branch:
 
-```bash
-git checkout step-2
-```
-
-## Support different HTTP methods
-Our first endpoint works like a charm but you will notice that no matter which HTTP method you'll use it will respond the same.
-E.g.:
+## Facilitating Varied HTTP Methods
+Our initial endpoint functions perfectly, but you'll observe that it responds identically regardless of the HTTP method employed. For instance:
 
 ```bash
 curl -X POST localhost:8000/api/hello
 curl -X PUT localhost:8000/api/hello
 ```
 
-The first gotcha when building the API ourselves without a framework is that we need to add our own code to distinguish the methods, e.g.:
+One of the initial challenges when constructing the API from scratch, devoid of a framework's assistance, is the requirement to incorporate our custom code to differentiate between HTTP methods. For example:
 
 ```java
         server.createContext("/api/hello", (exchange -> {
@@ -96,11 +80,11 @@ The first gotcha when building the API ourselves without a framework is that we 
         }));
 ```
 
-Now try again request:
+Now, let's make another request:
 ```bash
 curl -v -X POST localhost:8000/api/hello
 ```
-and the response would be like:
+here's what the response will look like:
 
 ```bash
 > POST /api/hello HTTP/1.1
@@ -111,18 +95,10 @@ and the response would be like:
 < HTTP/1.1 405 Method Not Allowed
 ```
 
-There are also a few things to remember, like to flush output or close exchange every time we return from the api.
-When I used Spring I even did not have to think about it.
+Additionally, there are a couple of important considerations to keep in mind, such as ensuring that we flush the output and close the exchange each time we return from the API. When working with Spring, these details are handled automatically, sparing us from having to worry about them.
 
-Try this part from branch:
-
-```bash
-git checkout step-3
-```
-
-## Parsing request params
-Parsing request params is another "feature" which we'll need to implement ourselves in contrary to utilising a framework.
-Let's say we would like our hello api to respond with a name passed as a param, e.g.:
+## Parsing Request Parameters
+Parsing request parameters is yet another "feature" that we'll need to implement ourselves, as opposed to relying on a framework's built-in capabilities. Suppose we desire our hello API to respond with a customized greeting based on a name provided as a parameter, for example:
 
 ```bash
 curl localhost:8000/api/hello?name=Marcin
@@ -130,7 +106,7 @@ curl localhost:8000/api/hello?name=Marcin
 Hello Marcin!
 
 ```
-We could parse params with a method like:
+We can handle parameter parsing using a method like:
 
 ```java
 public static Map<String, List<String>> splitQuery(String query) {
@@ -145,7 +121,7 @@ public static Map<String, List<String>> splitQuery(String query) {
     }
 ```
 
-and use it as below:
+here's how we can utilize it:
 
 ```java
  Map<String, List<String>> params = splitQuery(exchange.getRequestURI().getRawQuery());
@@ -155,23 +131,15 @@ String respText = String.format("Hello %s!", name);
            
 ```
 
-You can find complete example in branch:
-
-```bash
-git checkout step-4
-```
-
-Similarly if we wanted to use path params, e.g.:
+Likewise, if we intend to utilize path parameters, for instance:
 
 ```bash
 curl localhost:8000/api/items/1
 ```
-to get item by id=1, we would need to parse the path ourselves to extract an id from it. This is getting cumbersome.
+To retrieve an item with a specific ID, such as 1, we must manually parse the path to extract the ID, and this process can become rather cumbersome.
 
-
-## Secure endpoint
-A common case in each REST API is to protect some endpoints with credentials, e.g. using basic authentication.
-For each server context we can set an authenticator as below:
+## Securing the Endpoint
+In nearly every REST API, a common requirement is to safeguard certain endpoints with credentials, often accomplished through mechanisms like basic authentication. To achieve this, we can establish an authenticator for each server context, as demonstrated below:
 
 ```java
 HttpContext context =server.createContext("/api/hello", (exchange -> {
@@ -185,38 +153,35 @@ context.setAuthenticator(new BasicAuthenticator("myrealm") {
 });
 ```
 
-The "myrealm" in `BasicAuthenticator` is a realm name. Realm is a virtual name which can be used to separate different authentication spaces.
-You can read more about it in [RFC 1945](https://tools.ietf.org/html/rfc1945#section-11)
 
-You can now invoke this protected endpoint by adding an `Authorization` header like that:
+
+The term "myrealm" within the BasicAuthenticator corresponds to a realm name. A realm serves as a virtual identifier that helps differentiate various authentication spaces. You can delve deeper into this concept by referring to [RFC 1945](https://tools.ietf.org/html/rfc1945#section-11).
+
+To access this protected endpoint, you can include an "Authorization" header in your request, like so:
 
 ```bash
 curl -v localhost:8000/api/hello?name=Marcin -H 'Authorization: Basic YWRtaW46YWRtaW4='
 ```
 
-The text after `Basic` is a Base64 encoded `admin:admin`  which are credentials hardcoded in our example code.
-In real application to authenticate user you would probably get it from the header and compare with username and password store in database.
-If you skip the header the API will respond with status
+
+
+The text following `Basic` in the header represents a Base64-encoded form of `admin:admin`, which are the hardcoded credentials in our example code. In a real-world application, the authentication process typically involves extracting these credentials from the header and then comparing them with the username and password stored in a database.
+
+Should you omit the "Authorization" header, the API will respond with an appropriate status code to indicate the lack of authentication.
 ```
 HTTP/1.1 401 Unauthorized
 
 ```
 
-Check out the complete code from branch:
+## Handling JSON and Exception Scenarios, and More
 
-```bash
-git checkout step-5
-```
+Now, let's delve into a more intricate example.
 
-## JSON, exception handlers and others
+Drawing from my prior experience in software development, I've found that the most frequently encountered API scenario involves the exchange of JSON data.
 
-Now it's time for more complex example.
+In this case, we'll embark on creating an API for user registration, with an in-memory database serving as our data store.
 
-From my past experience in software development the most common API I was developing was exchanging JSON.
-
-We're going to develop an API to register new users. We will use an in-memory database to store them.
-
-Our user domain object will be simple:
+Our user domain object will be characterized by its simplicity:
 
 ```java
 @Value
@@ -229,9 +194,9 @@ public class User {
 }
 
 ```
-I'm using Lombok annotations to save me from constructor and getters boilerplate code, it will be generated in build time.
+I've employed Lombok annotations to spare myself from the tedium of crafting constructors and getters manually; they'll be automatically generated during the build process.
 
-In REST API I want to pass only login and password so I created a separate domain object:
+Within the context of our REST API, we aim to transmit only the login and password. To accommodate this, I've introduced a distinct domain object:
 
 ```java
 @Value
@@ -244,8 +209,9 @@ public class NewUser {
 
 ```
 
-Users will be created in a service which I will use in my API handler. The service method is simply storing the user.
-In complete application it could do more, like send events after successful user registration.
+User creation will be managed by a service that we'll employ within our API handler. The service method, in its current form, focuses solely on storing the user data.
+
+In a fully-fledged application, this service could encompass additional functionalities, such as triggering events following successful user registration.
 
 ```java
 public String create(NewUser user) {
@@ -253,7 +219,7 @@ public String create(NewUser user) {
 }
 ```
 
-Our in-memory implementation of repository is as follows:
+Our in-memory repository implementation is structured as follows:
 ```java
 
 import java.util.Map;
@@ -282,7 +248,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 }
 ```
-Finally, let's glue all together in handler:
+Finally, let's bring everything together in our handler:
 
 ```java
 protected void handle(HttpExchange exchange) throws IOException {
@@ -341,13 +307,6 @@ And this is how I instantiate the new handler in application main method:
         // here follows the rest.. 
 
  }
-```
-
-You can find the working example in separate git branch, where I also added a global exception handler which is used
-by the API to respond with a standard JSON error message in case, e.g. when HTTP method is not supported or API request is malformed.
-
-```java
-git checkout step-6
 ```
 
 You can run the application and try one of the example requests below:
