@@ -36,9 +36,9 @@ public abstract class Handler {
                 .getOrElseThrow (ApplicationExceptions.invalidRequest ());
     }
 
-    protected static Headers getHeader(String key, String value) {
-        Headers headers = new Headers ();
-        headers.set (key, value);
+    protected static Headers getHeader() {
+        var headers = new Headers ();
+        headers.set (Constants.CONTENT_TYPE, Constants.APPLICATION_JSON);
         return headers;
     }
 }

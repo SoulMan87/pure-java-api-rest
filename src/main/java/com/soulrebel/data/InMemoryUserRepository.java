@@ -14,8 +14,8 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public String create(NewUser newUser) {
-        final String id = UUID.randomUUID ().toString ();
-        User user = User.builder ()
+        final var id = UUID.randomUUID ().toString ();
+        var user = User.builder ()
                 .id (id)
                 .login (newUser.getLogin ())
                 .password (newUser.getPassword ())

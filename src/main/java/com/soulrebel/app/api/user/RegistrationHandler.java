@@ -1,7 +1,6 @@
 package com.soulrebel.app.api.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soulrebel.app.api.Constants;
 import com.soulrebel.app.api.Handler;
 import com.soulrebel.app.api.ResponseEntity;
 import com.soulrebel.app.api.StatusCode;
@@ -49,11 +48,11 @@ public class RegistrationHandler extends Handler {
                 .login (registrationRequest.getLogin ())
                 .password (PasswordEncoder.encodePassword (registrationRequest.getPassword ()))
                 .build ();
-        final String userId = userService.create (user);
+        final var userId = userService.create (user);
 
         var response = new RegistrationResponse (userId);
 
         return new ResponseEntity<> (response,
-                getHeader (Constants.CONTENT_TYPE, Constants.APPLICATION_JSON), StatusCode.OK);
+                getHeader (), StatusCode.OK);
     }
 }
