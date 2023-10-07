@@ -13,9 +13,9 @@ In such moments, rather than resorting to the familiar Spring toolbox, I challen
 Nonetheless, I found this exercise to be an incredibly enriching experience, one that broadened my understanding of Java development and provided valuable insights into the inner workings of the Spring framework.
 
 ## Commencement
-I will guide you through each step of this exercise, although I won't always provide the complete code within the text. However, you can easily access the code for each step by checking out separate branches.
+I will guide you through each step of this exercise, although I won't always provide the complete code within the text. However, you can easily access the code for each step.
 
-The starting point for this journey is an empty Application main class. You can obtain an initial branch with this setup like so:
+The starting point for this journey is an empty Application main class:
 
 ## First endpoint
 
